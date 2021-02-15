@@ -1,91 +1,45 @@
+# Solve Lane-Emden with RK2
 import numpy as np
 import matplotlib.pyplot as plt
 
+'''ODE Model:
+    dudxi = v
+    dudxi = -u**n - 2*v/xi
+    Problem: xi approaches infinity when u approaches 0 for some n
+            --> Stopping condition can not be u > 0 alone
+    Solution: apply power series'''
 
-def odeModel(state, z, n):
-    '''Input: 
-        state    initial state vector
-        z       independent variable
-        n       parameter
-        Output:
-        deriv Derivatives vector
-        '''
-    # set initial v and u for each integration step
-    v = state[0]
-    u = state[1]
-    # parameter n=n
+tau = 0.01      # appropriate time step
+fig, ax = plt.subplots()        # set up plot
 
-    # compute the right side of the ODEs
-    dudz = v
-    dvdz = -u**n - 2*v/z
-
-    # output
-    derive = np.array([dudz, dvdz])
- 
-    return derive
-
-def rk2(x, t, tau, derivsRK, n):
-    '''
-    #  Runge-Kutta integrator (2nd order)
-    # Input arguments -
-    #   x = current value of dependent variable
-    #   t = independent variable (usually time)
-    #   tau = step size (usually timestep)
-    #   derivsRK = right hand side of the ODE; derivsRK is the
-    #             name of the function which returns dx/dt
-    #             Calling format derivsRK (x,t,param).
-    #   param = extra parameters passed to derivsRK
-    # Output arguments -
-    #   xout = new value of x after a step of size tau
-    '''
-    half_tau = 0.5*tau
-    F1 = derivsRK(x,t, n)  
-    t_half = t + half_tau
-    xtemp = x + half_tau*F1
-    F2 = derivsRK(xtemp,t_half,n) 
-    xout = x + tau/2.*(F1 + F2)
-
-    return xout
-
-def main(v0, u0, tau, n):
-    '''Returns the righ side of the coupled first-order ODEs; used by RK routines
-    Inputs: 
-            v0      initial v
-            u0      initial u
-            tau     integration step size
-    Output:
-            u, v Results after the integration '''
-    u = u0   #initial u
-    v = v0   #initial v
-    z = 0    #initial z
+# loop through different n values
+#for n in [1.5, 3, 3.25]:
+for n in range(6):
+    xi = 0.0001       # initial xi
+    u = 1           # intial u
+    v = 0           # initial v
+    # container for final solutions of each variable 
     uplot = []
     vplot = []
-    zplot = []
-    
-    state = np.array([u, v])
-    
-    while u >= 0:
-        uplot.append(u)
+    xiplot = []
+    count = 0       # counter the total number of steps of integration
+
+    # Set stopping conditions: reaches the surface
+    while u >= 0 and xi < 30:
+        # add initial conditions
+        half_tau = 0.5*tau
+        xi += tau
+        
+        # RK2 integration
+        v += tau*(-(u+u*half_tau)**n - 2*(v+v*half_tau)/(xi+xi*half_tau))
+        u += tau*(v+v*half_tau)
+        # record solutions
+        uplot.append(u) 
         vplot.append(v)
-        zplot.append(z)
+        xiplot.append(xi)
+        count += 1
+    ax.plot(xiplot, uplot)      # plot xi vs. u under each n
 
-        z += tau    #next time step
-        # update new state
-        state = rk2(state, z, tau, odeModel, n)
-
-        # get updated u, v
-        u = state[0]
-        v = state[1]
-
-    return  uplot, vplot, zplot
-
-def plot(x, y):
-    fig, ax = plt.subplots()
-    ax.plot(x, y)
-    plt.show()
-
-    return 
-
-u, v, z = main(1, 0.01, 0.01, 2.5)
-
-print(u)
+ax.set_xlim([0, 10])        # set x axis limit
+ax.set_ylim([0, 1.0])       # set y axis limit
+plt.show()      # show plot

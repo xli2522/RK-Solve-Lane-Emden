@@ -1,29 +1,27 @@
-import numpy as np
+# sample solution using scipy's odeint
+# reference stackoverflow
+
 import matplotlib.pyplot as plt
+import numpy as np
+from scipy.integrate import odeint
 
-tau = 0.001      # time step 
+def poly(y,xi,n):  
+    theta, phi = y  
+    dydxi = [-phi/(xi**2), (xi**2)*theta**n]  
+    return dydxi
+
 fig, ax = plt.subplots()
-# try different n values
-for n in [1.5, 3, 3.25]:
-    xi = 0.0001       # initial condition for xi
-    u = 1           # intial condition for u, theta, the nondimensionalized radius
-    v = 0
-    # collectors for our final solutions for each variable 
-    uplot = []
-    vplot = []
-    xiplot = []
-    count = 0
-    while u >= 0 and xi < 20:
-        # add initial conditions
-        half_tau = 0.5*tau
-        xi += half_tau
-        v += tau*(-(u+u*half_tau)**n - 2*(v+v*half_tau)/(xi+xi*half_tau))
-        u += tau*(v+v*half_tau)
 
-        uplot.append(u)
-        vplot.append(v)
-        xiplot.append(xi)
-        count += 1
-    ax.plot(xiplot, uplot)
+y0 = [1.,0.]  
+xi = np.linspace(10e-4, 16., 201)
+
+for n in range(6):
+    sol = odeint(poly, y0, xi, args=(n,))
+    ax.plot(xi, sol[:, 0])
+
+ax.axhline(y = 0.0, linestyle = '--', color = 'k')
+ax.set_xlim([0, 10])
+ax.set_ylim([0, 1.0])
+ax.set_xlabel(r"$\xi$")
+ax.set_ylabel(r"$\theta$")
 plt.show()
-
