@@ -44,15 +44,20 @@ for n in [1.5, 3, 3.25]:
         count += 1
     ax.plot(xiplot, uplot)      # plot xi vs. u under each n
 
-# analytical
+# Calculation of q2 (a)
+xiRe = xiplot.pop()      # xi at the surface        7.979999999999874
+vRe = vplot.pop()       # dudxi at the surface      -0.02996372129871972
+Rsun = 6.96*10**10      # cm
+Msun = 1.99*10**33      # g
+rhoc = - (Msun * xiRe)/(4*np.pi*Rsun**3*vRe)
+print(rhoc)         # 125.09001252015766
+
+'''# analytical
 for n in [0, 1, 5]:
     uAnalytical = []
     xiAnalytical = []
-    xiAnalytical.append()
+    xiAnalytical.append()'''
 
-
-
-    
 ax.set_xlim([0, 10])        # set x axis limit
 ax.set_ylim([0, 1.0])       # set y axis limit
 ax.legend(['n = 1.5','n = 3','n = 3.5'])
