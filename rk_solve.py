@@ -61,11 +61,6 @@ for n in [1.5, 3, 3.25]:
             rho_ours.append(rho_c*(u**3.25)) # get the appropriate value for t
             zetas3point25.append(xi)
 
-    # if n==3.25:
-    # 	zetas3point25=xiplot
-    # 	thetas3point25=uplot
-
-
     ax.plot(xiplot, uplot, label="n="+str(n))      # plot xi vs. u under each n
     
 #define functions for the analytical solutions for n=0,1,5
@@ -80,7 +75,7 @@ def theta5(zeta):
 	return theta
 
 #generate the analytical solutions to be plotted
-thetas_0=[]
+thetas_0=[] # these are containers to hold the values of theta for each solution
 thetas_1=[]
 thetas_5=[]
 for i in range(len(xiplot)):
@@ -110,11 +105,6 @@ ax.set_ylabel('\u03B8')
 ax.set_title("Numeric and Analytic Solutions to the Lane-Emden Equation")       # set plot title
 ax.legend()
 
-#now do the plotting for Question 3
-# rho_ours=[] # initialize a list that will hold the values of rho
-# for i in range(len(thetas3point25)):
-# 	rho.append(rhoc*thetas3point25[i]**3.25)
-# # print(len(rho),len(zetas3point25))
 
 # make sure to transform the zeta values into units of solar radii
 radii=[] # the container to hold the radii values for plotting
